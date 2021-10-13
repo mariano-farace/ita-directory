@@ -41,10 +41,15 @@ const AdList = () => {
 
 	useEffect(() => {
 		const fetchAds = async () => {
+			/*
 			const result = await axios("https://api-casas.kevinmamaqi.com/api-casas", {
 				params: {_limit: 10}, //parece no estar implemententado en el api de casas
 			});
-			setAdList(result.data.slice(0, 50));
+*/
+			const result = await axios("http://localhost:5000/ads/v1/ads");
+			console.log(result.data.data);
+			localStorage.setItem("result", JSON.stringify(result.data.data));
+			setAdList(result.data.data);
 			setLoading(false);
 		};
 		fetchAds();
@@ -88,14 +93,32 @@ const AdList = () => {
 		setFilteredAdlist(_filteredAds);
 	}, [filtro, adList]);
 
-	const renderList = filteredAdList.map((e, index) => <AdCard {...e} key={index} />);
+	//const renderList = filteredAdList.map((e, index) => <AdCard {...e} key={index}  />);
+
+	const renderList = filteredAdList.map((e, index) => {
+		return (
+			<AdCard
+				key={index}
+				city={e.city}
+				description={e.description}
+				map_lat={e.map_lat}
+				map_lon={e.map_lon}
+				n_bathrooms={e.n_bathrooms}
+				price={e.price}
+				square_meters={e.square_meters}
+				title={e.title}
+				user_id={e.user_id}
+			/>
+		);
+	});
 
 	useEffect(() => {
 		if (loading === false) {
 			let priceValue = Array.from(renderList, (o) => o.props.price);
 			let maxPV = Math.max(...priceValue);
 			let minPV = Math.min(...priceValue);
-			let sizeValue = Array.from(renderList, (o) => o.props.m2);
+			//let sizeValue = Array.from(renderList, (o) => o.props.m2);
+			let sizeValue = Array.from(renderList, (o) => o.props.square_meters);
 			let mxM2 = Math.max(...sizeValue);
 			let mnM2 = Math.min(...sizeValue);
 
@@ -119,7 +142,22 @@ const AdList = () => {
 								maxM2={maxM2}
 								minM2={minM2}
 							/>
-							<div className="ads">
+							{/*here goes more map material*/}
+							{/*here goes commented map material*/}
+						</>
+					) : (
+						<p>Loading...</p>
+					)}
+					{!loading && <>{renderList}</>}
+				</Container>
+			</AdListStyled>
+		</Body>
+	);
+};
+export default AdList;
+
+/*
+<div className="ads">
 								<div className="tree-search">Madrid - Alquiler</div>
 								<div className="h3">Mapa de pisos</div>
 								<div className="rowWrapper">
@@ -149,15 +187,10 @@ const AdList = () => {
 										/>
 									)}
 								</div>
-								{mapView ? <MapView filteredAds={filteredAdList} /> : renderList}
-							</div>
-						</>
-					) : (
-						<p>Loading...</p>
-					)}
-				</Container>
-			</AdListStyled>
-		</Body>
-	);
-};
-export default AdList;
+									</div>
+*/
+
+/*
+	{mapView ? <MapView filteredAds={filteredAdList} /> : renderList}
+
+*/

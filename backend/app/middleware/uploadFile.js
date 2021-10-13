@@ -39,7 +39,8 @@ const slugName = (fileName, destination) => {
 const checkDupliates = (fileName, destination) => {
 	var slugIsUnique = true;
 	var count = 1;
-	const slug;
+	var slug; //changed to 'var' as error comes up in docker:
+	//" SyntaxError: Missing initializer in const declaration"
 
 	do {
 		if (fs.existsSync(destination + "/" + fileName)) {
@@ -48,7 +49,7 @@ const checkDupliates = (fileName, destination) => {
 			slug = fileName + "-" + count;
 		}
 	} while (!slugIsUnique);
-	
+
 	return slug;
 };
 
